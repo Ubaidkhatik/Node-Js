@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Management</title>
+</head>
+
+<body>
+
+<h2>Student List</h2>
+
+<button onclick="loadStudents()">Display Students</button>
+
+<ul id="studentList"></ul>
+
+<h2>Update Student</h2>
+
+ID: <input type="number" id="uid"><br><br>
+Name: <input type="text" id="uname"><br><br>
+Course: <input type="text" id="ucourse"><br><br>
+Marks: <input type="number" id="umarks"><br><br>
+
+<button onclick="updateStudent()">Update</button>
+
+<h2>Delete Student</h2>
+
+ID: <input type="number" id="did">
+<button onclick="deleteStudent()">Delete</button>
+
+<script>
+
+function loadStudents(){
+
+fetch('/students')
+.then(res=>res.json())
+.then(data=>{
+
+let list=document.getElementById("studentList");
+list.innerHTML="";
+
+data.forEach(s=>{
+
+let li=document.createElement("li");
+
+li.innerHTML = s.id+" - "+s.name+" - "+s.course+" - "+s.marks;
+
+list.appendChild(li);
+
+});
+
+});
+
+}
+
+function updateStudent(){
+
+let id=document.getElementById("uid").value;
+
+fetch('/students/'+id,{
+
+method:'PUT',
+headers:{'Content-Type':'application/json'},
+
+body:JSON.stringify({
+
+name:document.getElementById("uname").value,
+course:document.getElementById("ucourse").value,
+marks:document.getElementById("umarks").value
+
+})
+
+})
+.then(res=>res.text())
+.then(data=>{
+alert(data);
+loadStudents();
+});
+
+}
+
+function deleteStudent(){
+
+let id=document.getElementById("did").value;
+
+fetch('/students/'+id,{
+method:'DELETE'
+})
+.then(res=>res.text())
+.then(data=>{
+alert(data);
+loadStudents();
+});
+
+}
+
+</script>
+
+</body>
+</html>
